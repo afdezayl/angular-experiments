@@ -7,3 +7,8 @@
   />
 </div>
 <div>Message: {{ hello$ | async | json }}</div>
+<div>Message: {{ helloCached$ | async | json }}</div>
+<div>Message: {{ helloCached$ | async | json }}</div>
+<div>Message with delay: {{ helloWithDelay$ | async | json }}</div>
+<div>Message with delay: {{ helloWithDelay2$ | async | json }}</div>
+<button (click)="sayHello()">Hello</button>

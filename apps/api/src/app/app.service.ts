@@ -3,7 +3,7 @@ import { Message } from '@angular-experiments/api-interfaces';
 
 @Injectable()
 export class AppService {
-  getData(): Message {
-    return { message: 'Welcome to api!' };
+  getData(name: string): Message {
+    return { message: `Hello ${name}!` };
   }
 }
