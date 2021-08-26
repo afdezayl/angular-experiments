@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { CacheClientService } from './cache-client.service';
+import { HttpCacheClientService } from './http-cache-client.service';
 
 describe('CacheClientService', () => {
-  let service: CacheClientService;
+  let service: HttpCacheClientService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(CacheClientService);
+    service = TestBed.inject(HttpCacheClientService);
   });
 
   it('should be created', () => {

@@ -39,6 +39,9 @@
     "cache-e2e": {
       "tags": [],
       "implicitDependencies": ["cache"]
+    },
+    "http-cache": {
+      "tags": []
     }
   }
 }

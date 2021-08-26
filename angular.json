@@ -182,6 +182,31 @@
           }
         }
       }
+    },
+    "http-cache": {
+      "projectType": "library",
+      "root": "libs/http-cache",
+      "sourceRoot": "libs/http-cache/src",
+      "prefix": "angular-experiments",
+      "architect": {
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/http-cache"],
+          "options": {
+            "jestConfig": "libs/http-cache/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/http-cache/src/**/*.ts",
+              "libs/http-cache/src/**/*.html"
+            ]
+          }
+        }
+      }
     }
   },
   "cli": {

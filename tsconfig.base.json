@@ -17,7 +17,8 @@
     "paths": {
       "@angular-experiments/api-interfaces": [
         "libs/api-interfaces/src/index.ts"
-      ]
+      ],
+      "@angular-experiments/http-cache": ["libs/http-cache/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
