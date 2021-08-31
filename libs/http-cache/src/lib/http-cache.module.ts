@@ -45,7 +45,7 @@ export class HttpCacheModule {
     config: HttpCacheModuleConfig
   ): ModuleWithProviders<HttpCacheModule> {
     const value: Required<HttpCacheModuleConfig> = {
-      cleanChacheIntervalInSeconds: 5,
+      cleanChacheIntervalInSeconds: 30,
       ...config,
     };
     return {

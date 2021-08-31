@@ -42,8 +42,6 @@ export class CacheInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
     const { expiresIn } = request.context.get(CACHE_CONTEXT_TOKEN);
-    console.log(request.context);
-
     if (expiresIn <= 0) {
       return next.handle(request);
     }
@@ -53,52 +51,44 @@ export class CacheInterceptor implements HttpInterceptor {
     const currentTime = new Date().getTime();
 
     if (cachedResponse && cachedResponse.expires > currentTime) {
-      console.log(requestHash, 'Cached value...');
       return cachedResponse.response$;
     }
-    const expirationTime = currentTime + expiresIn;
+
     const response$ = next.handle(request).pipe(
       filter((res) => res instanceof HttpResponse),
       shareReplay(1)
     );
 
     if (this.cache.size === 0) {
-      console.log('starting interval...');
-
-      this.interval = setInterval(() => {
-        this.cleanCache();
-      }, this.moduleConfig.cleanChacheIntervalInSeconds * 1000);
+      this.interval = setInterval(
+        this.cleanCache.bind(this),
+        this.moduleConfig.cleanChacheIntervalInSeconds * 1000
+      );
     }
 
+    const expirationTime = currentTime + expiresIn;
     this.cache.set(requestHash, {
       expires: expirationTime,
       response$,
     });
 
-    console.log(requestHash, 'Requesting to server...');
-
-    return response$; //.pipe(first());
+    return response$;
   }
 
   private hashRequest(request: HttpRequest<unknown>): string {
-    return `#${request.method}: ${request.urlWithParams}@${
-      request.serializeBody()?.toString() ?? ''
-    }`;
+    const body = request.serializeBody()?.toString() ?? '';
+    return `#${request.method}:${request.urlWithParams}@${body}`;
   }
 
   private cleanCache() {
     const currentTime = new Date().getTime();
-    console.log('cleaning cache...', this.cache);
     for (const [key, value] of this.cache) {
       if (value.expires < currentTime) {
-        console.log(`--cleaning: ${key}`);
         this.cache.delete(key);
       }
     }
-    console.log(this.cache);
-    if (this.cache.size === 0) {
-      console.log('clearing interval...');
 
+    if (this.cache.size === 0) {
       clearInterval(this.interval);
     }
   }
