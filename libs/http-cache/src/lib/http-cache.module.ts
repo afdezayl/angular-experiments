@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import {
   InjectionToken,
   ModuleWithProviders,
@@ -6,6 +7,7 @@ import {
   Optional,
   SkipSelf,
 } from '@angular/core';
+import { CacheInterceptor } from './interceptors';
 
 export const HTTP_CACHE_CLIENT_CONFIG_OPTIONS = new InjectionToken<
   Required<HttpCacheModuleConfig>
@@ -24,6 +26,13 @@ export interface HttpCacheModuleConfig {
 
 @NgModule({
   imports: [CommonModule],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: CacheInterceptor,
+      multi: true,
+    },
+  ],
 })
 export class HttpCacheModule {
   constructor(@Optional() @SkipSelf() parentModule?: HttpCacheModule) {

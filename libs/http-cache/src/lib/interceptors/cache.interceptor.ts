@@ -36,6 +36,7 @@ export class CacheInterceptor implements HttpInterceptor {
     @Inject(HTTP_CACHE_CLIENT_CONFIG_OPTIONS)
     private readonly moduleConfig: Required<HttpCacheModuleConfig>
   ) {}
+
   intercept(
     request: HttpRequest<unknown>,
     next: HttpHandler
