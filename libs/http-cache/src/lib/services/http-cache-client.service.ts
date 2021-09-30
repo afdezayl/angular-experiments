@@ -29,6 +29,7 @@ export class HttpCacheClientService {
       ...options,
       context: newContext.set(CACHE_CONTEXT_TOKEN, {
         expiresIn: config.expiresIn ?? this.moduleConfig.expirationTime,
+        refresh: config.refresh ?? false,
       }),
     });
   }

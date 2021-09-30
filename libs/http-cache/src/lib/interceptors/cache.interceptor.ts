@@ -16,8 +16,10 @@ import {
 
 export const CACHE_CONTEXT_TOKEN = new HttpContextToken<{
   expiresIn: number;
+  refresh: boolean;
 }>(() => ({
   expiresIn: 0,
+  refresh: false,
 }));
 
 @Injectable()
@@ -41,7 +43,7 @@ export class CacheInterceptor implements HttpInterceptor {
     request: HttpRequest<unknown>,
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
-    const { expiresIn } = request.context.get(CACHE_CONTEXT_TOKEN);
+    const { expiresIn, refresh } = request.context.get(CACHE_CONTEXT_TOKEN);
     if (expiresIn <= 0) {
       return next.handle(request);
     }
@@ -50,7 +52,7 @@ export class CacheInterceptor implements HttpInterceptor {
     const cachedResponse = this.cache.get(requestHash);
     const currentTime = new Date().getTime();
 
-    if (cachedResponse && cachedResponse.expires > currentTime) {
+    if (!refresh && cachedResponse && cachedResponse.expires > currentTime) {
       return cachedResponse.response$;
     }
 

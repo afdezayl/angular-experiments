@@ -31,7 +31,8 @@ export class AppComponent {
       },
     },
     {
-      expiresIn: 3000,
+      expiresIn: 10000,
+      refresh: false,
     }
   );
   helloWithDelay$ = of(EMPTY).pipe(
