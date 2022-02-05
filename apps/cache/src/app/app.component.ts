@@ -51,6 +51,6 @@ export class AppComponent {
 
   sayHello() {
     this.helloCached$.subscribe(console.log, console.error);
-    //this.helloCached$.toPromise().then(console.log).catch(console.error);
+    this.helloCached$.toPromise().then(console.log).catch(console.error);
   }
 }
