@@ -1,0 +1,8 @@
+<ul *ngIf="menu$ | async as menu">
+  <app-menu-item
+    *ngFor="let item of menu"
+    [icon]="item.icon"
+    [title]="item.title"
+    [path]="item.path"
+  ></app-menu-item>
+</ul>
