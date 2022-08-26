@@ -1,0 +1,9 @@
+<div>
+  <ng-container *ngIf="this.page$ | async as page">
+    <button (click)="this.page$.next(this.page$.value - 1)">Anterior</button>
+  </ng-container>
+  <span>{{ (this.page$ | async)! + 1 }}</span>
+  <button (click)="this.page$.next(this.page$.value + 1)">Siguiente</button>
+</div>
+
+<p>{{ numbers$ | async | json }}</p>

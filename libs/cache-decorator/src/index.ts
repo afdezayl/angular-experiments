@@ -1,1 +1,1 @@
-export * from './lib/cache-decorator';
+export * from './lib';
