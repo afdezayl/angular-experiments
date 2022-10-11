@@ -5,8 +5,8 @@ import {
   RouterStateSnapshot,
   UrlTree,
 } from '@angular/router';
-import { EMPTY, expand, from, Observable, of, range } from 'rxjs';
-import { last, scan, skip, tap } from 'rxjs/operators';
+import { from, Observable, of } from 'rxjs';
+import { concatMap, first, take, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -24,75 +24,31 @@ export class ConcatCanActivateGuard implements CanActivate {
     | UrlTree {
     const guards: Array<ProviderToken<CanActivate>> =
       route.data['guards'] ?? [];
-    const instances$ = guards.map((g) => this.getInstance(g));
+    const instances$ = guards.map((g) => this.injector.get(g));
 
     return concatUntilLast<CanActivate, boolean | UrlTree>(
       instances$,
       (g) => mapToObservable(g.canActivate(route, state)),
-      (value) => !(value === true)
-    );
-
-    return concatUntil(
-      guards.map((g) => this.getInstance(g)),
-      route,
-      state
+      (value) => !(value === true),
+      true
     );
   }
-
-  private getInstance(guard: ProviderToken<CanActivate>): CanActivate {
-    return this.injector.get(guard);
-  }
-}
-
-export function concatUntil(
-  guards: Array<CanActivate>,
-  route: ActivatedRouteSnapshot,
-  state: RouterStateSnapshot
-): Observable<boolean | UrlTree> {
-  let denied = false;
-  return range(0, guards.length - 1).pipe(
-    expand((_, index) => {
-      if (index >= guards.length || denied) {
-        return EMPTY;
-      }
-
-      const guard = guards[index];
-      console.log(guard);
-      return mapToObservable(
-        guard.canActivate ? guard.canActivate(route, state) : true
-      ).pipe(tap((result) => (denied = !(result === true))));
-    }),
-    scan((acc, val) => val),
-    tap(() => console.log(new Date())),
-    last(null, true),
-    tap((x) => console.log('---->', x))
-  );
 }
 
 export function concatUntilLast<T, U = T>(
   sources: Array<T>,
   mapObservableFn: (value: T) => Observable<U>,
-  cancelFn: (value: U) => boolean = () => true
+  cancelFn: (value: U) => boolean = () => true,
+  defaultValue: U
 ) {
-  let denied = false;
   if (sources.length === 0) {
-    return EMPTY;
+    return mapToObservable(defaultValue);
   }
 
-  return range(0, sources.length - 1).pipe(
-    expand((_, index) => {
-      if (denied || index >= sources.length) {
-        console.log('END...');
-        return EMPTY;
-      }
-
-      const source = sources[index];
-      return mapObservableFn(source).pipe(tap((x) => (denied = cancelFn(x))));
-    }),
-    skip(1),
-    scan((acc, val) => val),
-    tap((x) => console.log(x, new Date())),
-    last(null, true),
+  return from(sources).pipe(
+    concatMap((s) => mapObservableFn(s).pipe(take(1))),
+    tap(console.log),
+    first((x) => cancelFn(x), defaultValue),
     tap((x) => console.log('---->', x))
   );
 }

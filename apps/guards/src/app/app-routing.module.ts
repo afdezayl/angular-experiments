@@ -11,7 +11,7 @@ const routes: Routes = [
     component: ProtectedComponent,
     canActivate: [ConcatCanActivateGuard],
     data: {
-      guards: [Guard1Guard, Guard2Guard],
+      guards: [Guard1Guard, Guard2Guard, Guard1Guard, Guard2Guard],
     },
   },
 ];

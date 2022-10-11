@@ -5,12 +5,13 @@ import {
   RouterStateSnapshot,
   UrlTree
 } from '@angular/router';
-import { delay, lastValueFrom, Observable, of } from 'rxjs';
+import { BehaviorSubject, delay, lastValueFrom, Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class Guard2Guard implements CanActivate {
+  private x = new BehaviorSubject<boolean>(true);
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
@@ -20,6 +21,6 @@ export class Guard2Guard implements CanActivate {
     | boolean
     | UrlTree {
       console.log('G-2');
-    return lastValueFrom(of(true).pipe(delay(1000)));
+    return this.x.pipe(delay(1000));
   }
 }

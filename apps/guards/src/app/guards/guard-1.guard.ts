@@ -21,6 +21,6 @@ export class Guard1Guard implements CanActivate {
     | boolean
     | UrlTree {
     console.log('G-1');
-    return of(false).pipe(delay(4000));
+    return of(true).pipe(delay(2000));
   }
 }
