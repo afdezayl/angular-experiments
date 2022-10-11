@@ -10,7 +10,15 @@ import {
   Subject,
   switchMap,
 } from 'rxjs';
-import { concatMap, delay, map, mergeMap, pairwise, scan, tap } from 'rxjs/operators';
+import {
+  concatMap,
+  delay,
+  map,
+  mergeMap,
+  pairwise,
+  scan,
+  tap,
+} from 'rxjs/operators';
 
 @Component({
   selector: 'angular-experiments-cache-with-class',
@@ -37,7 +45,7 @@ export class CacheWithClassComponent {
             numbers: [],
             page: current.page,
             next: true,
-          } as PaginatedNumbers);
+          });
     })
   );
 
