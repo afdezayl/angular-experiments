@@ -6,7 +6,7 @@ import {
   UrlTree,
 } from '@angular/router';
 import { EMPTY, expand, from, Observable, of, range } from 'rxjs';
-import { delay, last, scan, takeWhile, tap } from 'rxjs/operators';
+import { last, scan, skip, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -29,9 +29,7 @@ export class ConcatCanActivateGuard implements CanActivate {
     return concatUntilLast<CanActivate, boolean | UrlTree>(
       instances$,
       (g) => mapToObservable(g.canActivate(route, state)),
-      (value) => {
-        console.log(value);
-        return value === true}
+      (value) => !(value === true)
     );
 
     return concatUntil(
@@ -74,24 +72,25 @@ export function concatUntil(
 export function concatUntilLast<T, U = T>(
   sources: Array<T>,
   mapObservableFn: (value: T) => Observable<U>,
-  takeWhileFn: (value: U) => boolean = () => true
+  cancelFn: (value: U) => boolean = () => true
 ) {
+  let denied = false;
   if (sources.length === 0) {
     return EMPTY;
   }
 
   return range(0, sources.length - 1).pipe(
     expand((_, index) => {
-      if (index >= sources.length) {
+      if (denied || index >= sources.length) {
         console.log('END...');
         return EMPTY;
       }
 
       const source = sources[index];
-      return mapObservableFn(source);
+      return mapObservableFn(source).pipe(tap((x) => (denied = cancelFn(x))));
     }),
+    skip(1),
     scan((acc, val) => val),
-    takeWhile(takeWhileFn),
     tap((x) => console.log(x, new Date())),
     last(null, true),
     tap((x) => console.log('---->', x))

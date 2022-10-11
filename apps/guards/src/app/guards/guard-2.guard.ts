@@ -20,6 +20,6 @@ export class Guard2Guard implements CanActivate {
     | boolean
     | UrlTree {
       console.log('G-2');
-    return of(false).pipe(delay(1000));
+    return lastValueFrom(of(true).pipe(delay(1000)));
   }
 }
